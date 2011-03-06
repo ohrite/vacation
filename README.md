@@ -28,9 +28,6 @@ If you deploy to `bucket_name` bucket is called `bucket_name`-vacation-backup.
 
 Vacation gets invoked via a command line executable script, also called `vacation`!
 
-  Vacation is a way of deploying Jekyll sites to S3.
-
-  Basic Command Line Usage:
     vacation <bucket name>
     vacation <bucket name> <path to source>
 
