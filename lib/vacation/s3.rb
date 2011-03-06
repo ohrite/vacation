@@ -31,6 +31,7 @@ module Vacation
     end
     
     def download_from_bucket(path)
+      return unless storage.directories.get(bucket_name)
       FileUtils.mkdir_p(path)
       
       bucket.files.each do |file|
@@ -42,11 +43,11 @@ module Vacation
       end
     end
     
-    def upload_to_bucket(path, backup = false)
+    def upload_to_bucket(path, is_backup = false)
       return unless File.exists? path
 
-      strip_bucket unless backup
-      target = backup ? backup_bucket : bucket
+      strip_bucket unless is_backup
+      target = is_backup ? backup_bucket : bucket
       
       Dir[File.join(path, '**', '*')].each do |file|
         relative_path = file[path.length + 1..-1]
@@ -62,14 +63,14 @@ module Vacation
           backup_dir = File.expand_path(Time.now.strftime("%Y-%m-%d@%H:%M:%S(%Z)"), temp_dir)
           FileUtils.mkdir backup_dir
           
-          download_from_bucket(backup_dir)
-          upload_to_bucket(temp_dir, true)
+          download_from_bucket backup_dir
+          upload_to_bucket temp_dir, true
         end
       end
       
-      storage.put_bucket_website bucket_name, 'index.html', :key => '404.html'
+      upload_to_bucket path
       
-      upload_to_bucket(path)
+      storage.put_bucket_website bucket_name, 'index.html', :key => '404.html'
     end
   end
 end
