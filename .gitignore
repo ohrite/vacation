@@ -1,6 +1,7 @@
 *.gem
 *.rbc
 *.sw?
+.rvmrc
 .bundle
 .DS_Store
 _site/*
