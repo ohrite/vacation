@@ -9,7 +9,6 @@ namespace :vacation do
       jekyll = Vacation::Jekyll.new(Dir.pwd)
       jekyll.compile_to(temp_dir)
       
-      p args.inspect
       s3 = Vacation::S3.new(args[:aws_access_id], args[:aws_secret_key], args[:s3_bucket])
       s3.deploy_to_bucket(temp_dir)
     end

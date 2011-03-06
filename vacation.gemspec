@@ -19,7 +19,9 @@ Gem::Specification.new do |s|
   s.add_dependency "fog"
   s.add_dependency "jekyll"
  
-  s.files        = `git ls-files`.split("\n")
-  s.test_files   = `git ls-files -- {test,spec,features}/*`.split("\n")
-  s.require_path = 'lib'
+  s.files              = `git ls-files`.split("\n")
+  s.test_files         = `git ls-files -- {spec}/*`.split("\n")
+  s.require_path       = 'lib'
+  s.executables        = %w(vacation)
+  s.default_executable = "vacation"
 end

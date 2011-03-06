@@ -1,0 +1,70 @@
+#!/usr/bin/env ruby
+
+$:.unshift File.expand_path('../../lib', __FILE__)
+
+help = <<HELP
+Vacation is a way of deploying Jekyll sites to S3.
+
+Basic Command Line Usage:
+  jekyll <bucket name>
+  jekyll <bucket name> <path to source>
+
+  Your AWS information can be read from the environment as
+  AWS_ID and AWS_KEY or using the following variables:
+
+HELP
+
+require 'optparse'
+require 'vacation'
+
+options = {}
+opts = OptionParser.new do |opts|
+  opts.banner = help
+  
+  opts.on("--[no-]backup", "Back up the contents of the destination bucket") do |backup|
+    options['backup'] = backup
+  end
+
+  opts.on("--id [ID]", "Your AWS access key id") do |id|
+    options['access_id'] = id
+  end
+  
+  opts.on("--key [KEY]", "Your AWS secret key") do |secret_key|
+    options['secret_key'] = secret_key
+  end
+
+  opts.on("--version", "Display current version") do
+    puts "Vacation " + Vacation::VERSION
+    exit 0
+  end
+end
+
+opts.parse!
+
+# Get source and destintation from command line
+case ARGV.size
+  when 1
+    options['bucket'] = ARGV[0]
+  when 2
+    options['bucket'] = ARGV[0]
+    options['source'] = ARGV[1]
+  else
+    puts "Invalid options. Run `jekyll --help` for assistance."
+    exit(1)
+end
+
+options['access_id'] ||= ENV['AWS_ID']
+options['secret_key'] ||= ENV['AWS_KEY']
+
+unless options['access_id'] && options['secret_key']
+  puts "AWS credentials not found.  Run `jekyll --help` for assistance."
+  exit(1)
+end
+
+Dir.mktmpdir do |temp_dir|
+  jekyll = Vacation::Jekyll.new(options['source'])
+  jekyll.compile_to(temp_dir)
+  
+  s3 = Vacation::S3.new(options['access_id'], options['secret_key'], options['bucket'])
+  s3.deploy_to_bucket(temp_dir, :backup => options['backup'])
+end
