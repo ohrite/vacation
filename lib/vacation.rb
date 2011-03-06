@@ -4,7 +4,7 @@ require File.expand_path('../vacation/jekyll', __FILE__)
 
 module Vacation
   unless const_defined?(:VERSION)
-    VERSION = '0.1.0'
+    VERSION = '0.1.1'
   end
 end
 
