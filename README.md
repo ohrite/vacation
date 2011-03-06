@@ -1,6 +1,8 @@
 # Vacation
 
-Vacation lets you host Jekyll sites on S3.  It is a gem.  You add it via
+Vacation lets you host Jekyll sites on S3.  It is a gem.  You add it via `gem install vacation`.
+
+Then you take a vacation.
 
 ## Creating a Jekyll site
 
