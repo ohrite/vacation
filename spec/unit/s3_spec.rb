@@ -58,30 +58,32 @@ describe Vacation::S3 do
     end
   end
   
-  describe '#deploy_to_bucket' do
+  describe '#backup' do
     let(:backup_bucket) { s3.storage.directories.create(:key => "#{bucket_name}-vacation-backup") }
-    before do
+
+    it 'should deploy to the specified bucket' do
+      lambda {
+        s3.backup
+      }.should change { s3.backup_bucket.files.count }.by 2
+    end
+  end
+  
+  describe '#deploy_to_bucket' do
+    it 'should obey a no-backup parameter' do
       s3.storage.stub!(:put_bucket_website) do |name, index, opts|
         name.should == s3.bucket.key
         index.should == 'index.html'
         opts[:key].should == '404.html'
       end
-    end
-    
-    it 'should deploy to the specified bucket' do
-      s3.deploy_to_bucket fake_jekyll
-      s3.bucket.files.count.should == 7
-    end
-    
-    it 'should obey a no-backup parameter' do
+      
       lambda {
         s3.deploy_to_bucket fake_jekyll, :backup => false
       }.should_not change{ s3.backup_bucket.files.count }
     end
-    
+
     it 'should enable the static hosting parameter and pages' do
       pending 'this functionality is not mocked out in Fog yet'
-      s3.deploy_to_bucket fake_jekyll, :backup => false
+      s3.deploy_to_bucket fake_jekyll
       s3.storage.get_bucket_website(s3.bucket.key).body['IndexDocument']['Suffix'].should == 'index.html'
       s3.storage.get_bucket_website(s3.bucket.key).body['ErrorDocument']['Key'].should == '404.html'
     end
