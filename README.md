@@ -14,7 +14,7 @@ These should look something like the ones you get from Amazon.  Not Rackspace.
 
 Full `~/.fog` support will land in a bit.
 
-Then identify the name of the bucket you want to hork things into.
+Then identify the name of the bucket you want to hook things into.
 
 ## Backups
 
